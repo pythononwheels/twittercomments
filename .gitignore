@@ -6,7 +6,13 @@ __pycache__/
 # C extensions
 *.so
 # twittercomments
-tokens.py # put the twitter tokens here. Do not share !
+# put the twitter tokens here. Do not share !
+tokens.py 
+
+Include/
+Scripts/
+Lib/
+tcl/
 
 # Distribution / packaging
 .Python
