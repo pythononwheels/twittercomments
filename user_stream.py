@@ -7,6 +7,9 @@ import simplejson as json
 
 from tokens import *
 # These values are appropriately filled in the code
+import urllib
+from tornado.httpclient import HTTPClient
+import requests
 
 
 class StdOutListener( StreamListener ):
@@ -21,7 +24,7 @@ class StdOutListener( StreamListener ):
         print("Connection lost!! : ", notice)
 
     def on_data( self, status ):
-        print("Entered on_data()")
+        #print("Entered on_data()")
         data = json.loads(status)
         print(40*"*")
         print(data["text"])
@@ -29,10 +32,19 @@ class StdOutListener( StreamListener ):
             print(data["entities"]["hashtags"])
         except:
             print("Key entities Missing")
-        print(40*"*")
-        #print(status, flush = True)
+        headers = {'content-type': 'application/json'}
 
+        print(40*"*")
+        r = requests.post("http://localhost:8080/add/tweet/"+str(data["id_str"]), data=json.dumps(data), headers=headers)
+        #print(status, flush = True)
+        print(40*"-")
+        
+        print("Response: " + str(r))
+        print(40*"-")
         return True
+    
+    def handle_request_response(self, response):
+        print(str(response))
 
     def on_direct_message( self, status ):
         print("Entered on_direct_message()")

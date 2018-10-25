@@ -77,3 +77,10 @@ class PowHandler(BaseHandler):
         # add your modifications below.
         # add arguements that are needed by all viwes etc ..
         BaseHandler.success(self, **kwargs)
+    
+    def init_on_load(self):
+        """
+            Overwrite this method in your handler class to init stuff
+            (replacement for __init__)
+        """
+        return

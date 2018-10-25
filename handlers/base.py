@@ -23,15 +23,18 @@ class BaseHandler(tornado.web.RequestHandler):
             print("  .. .. kwargs: " + str(kwargs))
         self.dispatch_kwargs = kwargs
         self.dispatch_args = args
+        self.init_on_load()
         
-        
+    def init_on_load(self):
+        return
+    
     def prepare(self):
         """
             Called at the beginning of a request before get/post/etc.
         """
         # log analytics (ip, method, timestamp, uri)
         # see pow_analytics.log
-        self.application.log_analytics(self.request)
+        ##self.application.log_analytics(self.request)
         
         #print(self.request)
         self.uri = self.request.uri

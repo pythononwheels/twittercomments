@@ -1,5 +1,34 @@
 {% extends "base.bs4" %}
 
+{% block include_css %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
+{% end %}
+
+{% block include_js %}
+    <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+{% end %}
+
+{% block document_ready %}
+  console.log("called long polling /messages/");
+  function get_messages() {
+      $.getJSON( "/messages/", function( data ) {
+      console.log("got it")
+      var items = [];
+      $.each( data, function( key, val ) {
+        items.push( "<li id='" + key + "'>" + val + "</li>" );
+      });
+    
+      $( "<ul/>", {
+        "class": "my-new-list",
+        html: items.join( "" )
+      }).appendTo( "body" );
+    });
+    setTimeout(get_messages,0);
+  }
+  get_messages();
+  
+{% end %}
+
 {% block content %}
     <!-- Begin page content -->
     <div class="container">
