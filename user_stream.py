@@ -74,7 +74,7 @@ def main():
 
         #s = stream.userstream()
         #stream(follow="twittercomments")
-        stream.filter(track=["python"], async_=True)
+        stream.filter(track=["python", "python3", "Python"], async_=True)
         
 
 
