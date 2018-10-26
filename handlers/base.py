@@ -506,7 +506,10 @@ class BaseHandler(tornado.web.RequestHandler):
         # encode the data to json.
         # the encoders convert the json to any requested output format then.
         if not data == None and isinstance(data,self.model.__class__):
-            data = self.model.res_to_json(data)
+            try:
+                data = self.model.res_to_json(data)
+            except:
+                pass
         if cfg.server_settings["debug_print"]:
             print(" In base.error:")
             print("  .. data: " + str(data))

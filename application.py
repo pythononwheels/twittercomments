@@ -28,7 +28,7 @@ log_handler.setFormatter(formatter)
 #
 # analytics_log_handler 
 #
-LOG_FILENAME = './pow_analytics.log'
+LOG_FILENAME = './tc_analytics.log'
 
 # Set up a specific logger with our desired output level
 analytics_logger = logging.getLogger('PowAnalyticsLogger')
