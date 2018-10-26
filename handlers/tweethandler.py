@@ -25,7 +25,7 @@ class TweetHandler(PowHandler):
         """
         print("Adding callback")
         self.__class__.callbacks.add(self._callback)
-        print(self.__class__.callbacks)
+        #print(self.__class__.callbacks)
 
 
     def _callback(self, html):
@@ -33,18 +33,18 @@ class TweetHandler(PowHandler):
         self.success(message="new tweet", data=html, pure=True)
         self.finish()
 
-    def fire_callbacks(self, new_tweet):
+    async def fire_callbacks(self, new_tweet):
         for c in self.__class__.callbacks:
             print("fire!")
             c(new_tweet)
         
         self.__class__.callbacks = set()
 
-    def add_tweet(self, id=None):
+    async def add_tweet(self, id=None):
         """
             just a simple hanlder sceleton. Adapt to your needs
         """ 
-        print(self.request.body)
+        #print(self.request.body)
         try:
             #data=self.request.body
             data=json.loads(self.request.body.decode('utf-8'))
@@ -76,10 +76,10 @@ class TweetHandler(PowHandler):
         # get the embed html from twitter oembed API
         #
         r=requests.get("https://publish.twitter.com/oembed?url=https://twitter.com/Interior/status/"+ t.tweet_id )
-        print(r.json())
+        #print(r.json())
         #t.upsert()
-        print(self.__class__.callbacks)
-        self.fire_callbacks(r.json())
+        #print(self.__class__.callbacks)
+        await self.fire_callbacks(r.json())
         #self.success(message="Added tweet id: {} ".format(str(id)), data=t.to_json(), format="json", pure=True)
         
     

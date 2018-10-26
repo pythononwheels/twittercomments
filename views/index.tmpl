@@ -6,6 +6,10 @@
 
 {% block include_js %}
     <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.3/d3.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/topojson/1.6.9/topojson.min.js"></script>
+    <script src="{{ static_url("js/datamaps.world.min.js") }}"></script>
+    
     <script>window.twttr = (function(d, s, id) {
         var js, fjs = d.getElementsByTagName(s)[0],
           t = window.twttr || {};
@@ -41,6 +45,39 @@
         });
       }
     </script>
+    <script>
+      // see: http://datamaps.github.io/
+      var basic_choropleth = new Datamap({
+        element: document.getElementById("basic_choropleth"),
+        projection: 'mercator',
+        fills: {
+          defaultFill: "#ABDDA4",
+          authorHasTraveledTo: "#fa0fa0"
+        },
+        data: {
+          USA: { fillKey: "authorHasTraveledTo" },
+          JPN: { fillKey: "authorHasTraveledTo" },
+          ITA: { fillKey: "authorHasTraveledTo" },
+          CRI: { fillKey: "authorHasTraveledTo" },
+          KOR: { fillKey: "authorHasTraveledTo" },
+          DEU: { fillKey: "authorHasTraveledTo" },
+        }
+      });
+
+      var colors = d3.scale.category10();
+
+      window.setInterval(function() {
+        basic_choropleth.updateChoropleth({
+          USA: colors(Math.random() * 10),
+          RUS: colors(Math.random() * 100),
+          AUS: { fillKey: 'authorHasTraveledTo' },
+          BRA: colors(Math.random() * 50),
+          CAN: colors(Math.random() * 50),
+          ZAF: colors(Math.random() * 50),
+          IND: colors(Math.random() * 50),
+        });
+      }, 2000);
+    </script>
 {% end %}
 
 {% block document_ready %}
@@ -68,49 +105,46 @@
           <a href="https://www.pythononwheels.org/article/7de74cc6-8af2-45ac-b619-eea61e4da44f">PythonOnWheels getting started</a>
         </div>
       </div>
-      <div class="row">
-        <div class="col-md-2">
-          &nbsp;
-        </div>
-        <div class="col-md-8">
-          &nbsp;
-        </div>
+    
+      <div class="container">
+        <div class="row">
+          <div class="col-md-8">
         
-        <div class="col-md-2">
-          &nbsp;
-        </div>
-      </div>
-      <div class="row">
-          <div class="col-md-3">
-              &nbsp;
-          </div>
-          <div class="col-md-6 justify-content-center">
-            <img src={{ static_url("images/Twitter_Logo_Blue.png") }}  style="display: inline-block; height: 145px;"/>
-            <img src={{ static_url("images/pow_logo_300.png") }}  style="display: inline-block; height:100px;"/>
-          </div>
-            <div class="col-md-3">
-                &nbsp;
+            <div class="row">
+                <div class="col-md-3">
+                    &nbsp;
+                </div>
+                <div class="col-md-10 justify-content-center">
+                  <img src={{ static_url("images/Twitter_Logo_Blue.png") }}  style="display: inline-block; height: 145px;"/>
+                  <img src={{ static_url("images/pow_logo_300.png") }}  style="display: inline-block; height:100px;"/>
+                </div>
+                  <div class="col-md-3">
+                      &nbsp;
+                  </div>
             </div>
-      </div>
-      <!-- START THE FEATURETTES -->
+            <!-- START THE FEATURETTES -->
 
-      <!--hr class="featurette-divider" -->
-      <div class="row">
-        <div class="col-md-3">
-          &nbsp;
+            <!--hr class="featurette-divider" -->
+            <div class="row">
+              <div class="col-md-3">
+                &nbsp;
+              </div>
+              <div class="col-md-10">
+                <h1> See what's up with #python </h1>
+                
+                <div id="tweets"></div>
+
+              </div>
+              <div class="col-md-3">
+              &nbsp;
+            </div>
+          </div>
+          </div>
+          <div class="col-md-4">
+              <div id="basic_choropleth" style="position: relative; width: 500px; height: 300px; margin-top: 150px;"></div>
+          </div>
         </div>
-        <div class="col-md-6">
-          <h1> See what's up with #python </h1>
-          
-          <div id="tweets"></div>
-
-        </div>
-        <div class="col-md-3">
-        &nbsp;
       </div>
-
-
+  </div>  
       
-
-    </div> <!-- /container -->
 {% end %}
