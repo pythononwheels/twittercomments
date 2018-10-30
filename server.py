@@ -17,6 +17,7 @@ from twittercomments.application import Application, log_handler
 import logging
 
 app=Application()
+
 def main(stdout=False):    
     if stdout:
         print() 
@@ -70,6 +71,13 @@ def main(stdout=False):
         print(50*"-")
         print("visit: http://localhost:" + str(app_settings["port"]))
         print("running...")
+    
+    
+    app.country_cache = {}
+    app.hash_cache = {}
+    app.user_cache = {}
+    app.tweet_cache = {}
+
     http_server = tornado.httpserver.HTTPServer(app)
     http_server.listen(app_settings["port"])
     ioloop = tornado.ioloop.IOLoop.instance()

@@ -40,7 +40,7 @@ class Dash(PowHandler):
         #
         #external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
         retval = dispatcher(self.request, username="fake", session_id=1234)
-        print("dash dispatcher got:" + str(retval)[0:200])
+        #print("dash dispatcher got cut to [0:200]" + str(retval)[0:200])
         
         #
         # get all tweets to get some data
@@ -83,8 +83,8 @@ class Dash(PowHandler):
         # now hand over to the dispatcher
         #
         retval = dispatcher(self.request, username="fake", session_id=1234)
-        print("dash_ajax I got retval: {}".format(str(retval)[0:200]))
-        print("dash_ajax I got username(from session): {}".format(name))
+        #print("dash_ajax I got retval: {}".format(str(retval)[0:200]))
+        #print("dash_ajax I got username(from session): {}".format(name))
         # finish
         self.set_header('Content-Type', 'application/json')
         self.write(retval)

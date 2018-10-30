@@ -34,7 +34,10 @@ class StdOutListener( StreamListener ):
         except:
             print("Key entities Missing")
         headers = {'content-type': 'application/json'}
-
+        #
+        # check for some unwanted stuff
+        #
+        #if "porn" in data["text"]
         print(40*"*")
         r = requests.post("http://localhost:8080/add/tweet/"+str(data["id_str"]), data=json.dumps(data), headers=headers)
         #print(status, flush = True)
@@ -72,15 +75,16 @@ def main():
         print(api.me().name)
 
         stream = Stream(auth=api.auth, listener=StdOutListener())
+        print(sys.argv)
         try:
             keywords = str.split(sys.argv[1], " ")
         except:
             keywords=["python", "Python", "python3"]
         
-        print("Looking for: {}".format(keyword))
+        print("Looking for: {}".format(keywords))
         #s = stream.userstream()
         #stream(follow="twittercomments")
-        stream.filter(track=[keyword], async_=True)
+        stream.filter(track=keywords, async_=True)
         
 
 

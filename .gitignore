@@ -16,7 +16,7 @@ tcl/
 etc/
 share/
 tiny.db
-
+bin/
 # Distribution / packaging
 .Python
 build/

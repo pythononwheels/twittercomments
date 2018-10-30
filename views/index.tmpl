@@ -14,7 +14,7 @@
     <meta name="author" content="">
     <!--link rel="icon" href="../../favicon.ico"-->
     <link rel="shortcut icon" type="image/x-icon" href="{{ static_url("images/pow_favicon-16x16.png")}}">
-    <title>Welcome to PythonOnWheels</title>
+    <title>Whats Up With Helloween demo</title>
 
     <!-- Bootstrap core CSS -->
     <!--link href="../../dist/css/bootstrap.min.css" rel="stylesheet"-->
@@ -49,10 +49,10 @@
           &nbsp;
         </div>
         <div class="col-md-4 text-left">
-          <a href="/">home</a>
+          <a href="/">#helloween </a>
         </div>
         <div class="col-md-4 text-right">
-          <a href="https://www.pythononwheels.org/article/7de74cc6-8af2-45ac-b619-eea61e4da44f">PythonOnWheels getting started</a>
+          <a href="https://www.pythononwheels.org/article/7de74cc6-8af2-45ac-b619-eea61e4da44f">Check PythonOnWheels</a>
         </div>
       </div>
     
@@ -80,10 +80,10 @@
                 &nbsp;
               </div>
               <div class="col-md-10">
-                <h1> See what's up with #python </h1>
-                
-                <div id="tweets"></div>
-
+                <span class="justify-content-center"><h2>Realtime data: <small>(from twitter)</small></h2></span>
+                <div class="tweet_span">
+                  <div class="tweets"></div>
+                </div>
               </div>
               <div class="col-md-3">
               &nbsp;
@@ -92,10 +92,14 @@
           </div>
           <div class="col-md-5">
               <div id="basic_choropleth" style="position: relative; width: 500px; height: 300px; margin-top: 60px; margin-bottom: 30px;"></div>
-                     
+              <div class="justify-content-center">The chart below is a <a href="https://dash.plot.ly/">Plotly Dash chart</a>
+                embedded in a standard PythonOnWheels template. Check the github repo to see how it works: 
+                <!-- Place this tag where you want the button to render. -->
+                <a class="github-button" href="https://github.com/pythononwheels/twittercomments" aria-label="Star pythononwheels/twittercomments on GitHub">Star</a>
+              </div>
               <div id="react-entry-point">
                   <span class="_dash-loading">
-                      Loading... gvdsg
+                      Loading... Dash components
                   </span>
               </div>
               
@@ -129,16 +133,21 @@
     }(document, "script", "twitter-wjs"));
   
   
-  
-      function get_messages() {
-        $.getJSON( "/messages/", function( data, status, xhr ) {
-          console.log("got it")
-          var items = [];
-          console.log(data);
+    var num_tweets = 0;
+    var max_tweets = 2;
+    function get_messages() {
+      $.getJSON( "/messages", function( data, status, xhr ) {
+        console.log("got it")
+        var items = [];
+        console.log(data);
 
-          $("#tweets").prepend( "<div>" + data["html"] + "</div>" );
-
-          setTimeout(get_messages,0);
+        $(".tweets").prepend( "<div>" + data["html"] + "</div>" );
+        
+        if (num_tweets >= max_tweets){
+          $('.tweets').children().last().remove();
+        }
+        num_tweets += 1
+        setTimeout(get_messages,0);
       });
     }
     

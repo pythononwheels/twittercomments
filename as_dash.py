@@ -16,6 +16,10 @@ import dash_dangerously_set_inner_html
 from collections import OrderedDict
 import plotly.graph_objs as go
 import random
+import requests
+from tornado import httpclient
+from twittercomments.server import app as tcapp
+#
 #
 # embed dash in website. (Django example)
 # see: https://community.plot.ly/t/embed-dash-plot-into-web-page/5337/3 
@@ -49,14 +53,14 @@ def dispatcher(request,**kwargs):
     @param request: Request object
     '''
     
-    print(40*"-")
-    print("as_dash dispatcher->request: " + str(request))
-    print("dispatcher path: " + str(request.path))
-    print("kwargs in dispatcher:")
-    for key, value in kwargs.items():
-        print("The kwargs value of {} is {}".format(key, value))
-    print("  ..Done..")
-    print(40*"-")
+    #print(40*"-")
+    #print("as_dash dispatcher->request: " + str(request))
+    #print("dispatcher path: " + str(request.path))
+    #print("kwargs in dispatcher:")
+    #for key, value in kwargs.items():
+    #    print("The kwargs value of {} is {}".format(key, value))
+    #print("  ..Done..")
+    #print(40*"-")
     
     
 
@@ -74,7 +78,7 @@ def dispatcher(request,**kwargs):
         except Exception as e:
             response = app.server.make_response(app.server.handle_exception(e))
             print(70*"=")
-            print("done dispatching")
+            print("done dash dispatching")
             print(70*"=")
         return response.get_data()
     
@@ -92,12 +96,12 @@ def dispatcher(request,**kwargs):
 def _create_app(*args, **kwargs):
     ''' Creates dash application '''
     
-    print(40*"-")
-    print("  Kwargs in _create_app:")
-    for key, value in kwargs.items():
-        print("The kwargs value of {} is {}".format(key, value))
-    print("  ..Done..")
-    print(40*"-")
+    #print(40*"-")
+    #print("  Kwargs in _create_app:")
+    #for key, value in kwargs.items():
+    #    print("The kwargs value of {} is {}".format(key, value))
+    #print("  ..Done..")
+    #print(40*"-")
     #app = dash.Dash(csrf_protect=False)
     
     app = myDash(csrf_protect=False)
@@ -105,9 +109,9 @@ def _create_app(*args, **kwargs):
     app.config['suppress_callback_exceptions']=True
 
     # get the data from the db and init the dataframe
-    print("*******************************************************")
-    print(" Getting tweets from DB and building DataFrame")
-    print("*******************************************************")
+    #print("*******************************************************")
+    #print(" Getting tweets from DB and building DataFrame")
+    #print("*******************************************************")
     #m=Tweet()
     #res=m.get_all()
     #df=pd.DataFrame([x.to_dict() for x in res])
@@ -119,24 +123,31 @@ def _create_app(*args, **kwargs):
 
     # use somhow raw html : https://github.com/plotly/dash-dangerously-set-inner-html
 
-    app.layout = html.Div(children=[
+    app.layout = html.Div(className="justify-content-center",children=[
         #html.H1(children='Hello Dash'),
-
-        html.Div(children='''
-            Dash: A web application framework for Python.
-        '''),
-
         dcc.Graph(id='live-update-graph'),
         dcc.Interval(
             id='interval-component',
-            interval=5*1000, # in milliseconds
+            interval=10*1000, # in milliseconds
             n_intervals=0
         )
     ])
-
+    def get_hashtags():
+        http_client = httpclient.HTTPClient()
+        response = http_client.fetch("http:/localhost:8080/hashtags")
+        #print(response)
+        #return
+    
     @app.callback(Output('live-update-graph', 'figure'),
               [Input('interval-component', 'n_intervals')])
-    def update_graph_live(n):
+    def update_graph_live(n):        
+        #get_hashtags()
+        try:
+            data = tcapp.hash_cache.items()
+            print("xxxxxxxx xxxxx xxxxx hab welche xxxxx x xxxxxxx xxxx x x x")
+        except:
+            pass
+        #print(data)
         trace1 = go.Bar(
             x=['giraffes', 'orangutans', 'monkeys'],
             y=random.sample(range(0,10),3),
@@ -150,7 +161,16 @@ def _create_app(*args, **kwargs):
 
         data = [trace1, trace2]
         layout = go.Layout(
-            barmode='group'
+            barmode='group',
+            margin=go.layout.Margin(
+                l=40,
+                r=30,
+                b=120,
+                t=10,
+                pad=4
+            ),
+            width=500
+
         )
 
         fig = go.Figure(data=data, layout=layout)

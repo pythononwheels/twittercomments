@@ -13,7 +13,7 @@ server_settings = {
     "host"              :   "localhost",
     "port"              :   8080,
     "debug"             :   True,
-    "debug_print"       :   True,
+    "debug_print"       :   False,
     #Logs a stack trace if the IOLoop is blocked for more than s seconds. so 0.050 means 50ms
     "IOLoop.set_blocking_log_threshold" : 0, 
     "logging"           :   True,
