@@ -10,6 +10,7 @@ from tokens import *
 import urllib
 from tornado.httpclient import HTTPClient
 import requests
+import sys
 
 
 class StdOutListener( StreamListener ):
@@ -71,10 +72,15 @@ def main():
         print(api.me().name)
 
         stream = Stream(auth=api.auth, listener=StdOutListener())
-
+        try:
+            keywords = str.split(sys.argv[1], " ")
+        except:
+            keywords=["python", "Python", "python3"]
+        
+        print("Looking for: {}".format(keyword))
         #s = stream.userstream()
         #stream(follow="twittercomments")
-        stream.filter(track=["python", "python3", "Python"], async_=True)
+        stream.filter(track=[keyword], async_=True)
         
 
 

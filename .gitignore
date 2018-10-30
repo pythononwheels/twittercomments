@@ -13,6 +13,9 @@ Include/
 Scripts/
 Lib/
 tcl/
+etc/
+share/
+tiny.db
 
 # Distribution / packaging
 .Python

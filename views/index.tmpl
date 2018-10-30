@@ -1,98 +1,48 @@
-{% extends "base.bs4" %}
+{% import config as cfg %} 
+{% import dash %}
+{% import dash_core_components as dcc %}
+{% import dash_html_components as html %}
 
-{% block include_css %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!--link rel="icon" href="../../favicon.ico"-->
+    <link rel="shortcut icon" type="image/x-icon" href="{{ static_url("images/pow_favicon-16x16.png")}}">
+    <title>Welcome to PythonOnWheels</title>
+
+    <!-- Bootstrap core CSS -->
+    <!--link href="../../dist/css/bootstrap.min.css" rel="stylesheet"-->
+    <link href="{{ static_url("css/bootstrap.css") }}" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <!--link href="sticky-footer-navbar.css" rel="stylesheet"-->
+    <!--link href="{{ static_url("css/sticky-footer-navbar.css") }}" rel="stylesheet"-->
+    
+    <link href="{{ static_url("css/justified-nav.css") }}" rel="stylesheet">
+    <link href="{{ static_url("css/prism.css") }}" rel="stylesheet">
+    <link href="{{ static_url("css/pow.css") }}" rel="stylesheet">
+    <link rel="stylesheet" href="https://rawgit.com/enyo/dropzone/master/dist/dropzone.css">
+    
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
-{% end %}
 
-{% block include_js %}
     <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.3/d3.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/topojson/1.6.9/topojson.min.js"></script>
     <script src="{{ static_url("js/datamaps.world.min.js") }}"></script>
-    
-    <script>window.twttr = (function(d, s, id) {
-        var js, fjs = d.getElementsByTagName(s)[0],
-          t = window.twttr || {};
-        if (d.getElementById(id)) return t;
-        js = d.createElement(s);
-        js.id = id;
-        js.src = "https://platform.twitter.com/widgets.js";
-        fjs.parentNode.insertBefore(js, fjs);
-      
-        t._e = [];
-        t.ready = function(f) {
-          t._e.push(f);
-        };
-      
-        return t;
-      }(document, "script", "twitter-wjs"));
-    </script>
-    
-    <script>
-        function get_messages() {
-          $.getJSON( "/messages/", function( data, status, xhr ) {
-            console.log("got it")
-            var items = [];
-            console.log(data);
-            
 
-            $("#tweets").prepend( "<div>" + data["html"] + "</div>" );
-            
-          
-            
-            
-            setTimeout(get_messages,0);
-        });
-      }
-    </script>
-    <script>
-      // see: http://datamaps.github.io/
-      var basic_choropleth = new Datamap({
-        element: document.getElementById("basic_choropleth"),
-        projection: 'mercator',
-        fills: {
-          defaultFill: "#ABDDA4",
-          authorHasTraveledTo: "#fa0fa0"
-        },
-        data: {
-          USA: { fillKey: "authorHasTraveledTo" },
-          JPN: { fillKey: "authorHasTraveledTo" },
-          ITA: { fillKey: "authorHasTraveledTo" },
-          CRI: { fillKey: "authorHasTraveledTo" },
-          KOR: { fillKey: "authorHasTraveledTo" },
-          DEU: { fillKey: "authorHasTraveledTo" },
-        }
-      });
+  </head>
 
-      var colors = d3.scale.category10();
+  <body>
 
-      window.setInterval(function() {
-        basic_choropleth.updateChoropleth({
-          USA: colors(Math.random() * 10),
-          RUS: colors(Math.random() * 100),
-          AUS: { fillKey: 'authorHasTraveledTo' },
-          BRA: colors(Math.random() * 50),
-          CAN: colors(Math.random() * 50),
-          ZAF: colors(Math.random() * 50),
-          IND: colors(Math.random() * 50),
-        });
-      }, 2000);
-    </script>
-{% end %}
-
-{% block document_ready %}
-  console.log("called long polling /messages/");
-  setTimeout(get_messages,200);
-  
-{% end %}
-
-{% block content %}
     <!-- Begin page content -->
     <div class="container">
       <!-- The justified navigation menu is meant for single line per list item.
            Multiple lines will require custom code not provided by Bootstrap. -->
-      
-
       <!-- Jumbotron -->
       <div class="row navpow">
         <div class="col-md-2">
@@ -141,10 +91,96 @@
           </div>
           </div>
           <div class="col-md-5">
-              <div id="basic_choropleth" style="position: relative; width: 500px; height: 300px; margin-top: 150px;"></div>
+              <div id="basic_choropleth" style="position: relative; width: 500px; height: 300px; margin-top: 60px; margin-bottom: 30px;"></div>
+                     
+              <div id="react-entry-point">
+                  <span class="_dash-loading">
+                      Loading... gvdsg
+                  </span>
+              </div>
+              
+              <!-- this is the place where the dash HTML is rendered untouched (raw) -->
+                {% raw dash_block %}
+              <!-- End dash-->
           </div>
         </div>
       </div>
   </div>  
       
-{% end %}
+
+
+  {% include "footer.bs4" %}
+  <script>
+    window.twttr = (function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0],
+        t = window.twttr || {};
+      if (d.getElementById(id)) return t;
+      js = d.createElement(s);
+      js.id = id;
+      js.src = "https://platform.twitter.com/widgets.js";
+      fjs.parentNode.insertBefore(js, fjs);
+    
+      t._e = [];
+      t.ready = function(f) {
+        t._e.push(f);
+      };
+    
+      return t;
+    }(document, "script", "twitter-wjs"));
+  
+  
+  
+      function get_messages() {
+        $.getJSON( "/messages/", function( data, status, xhr ) {
+          console.log("got it")
+          var items = [];
+          console.log(data);
+
+          $("#tweets").prepend( "<div>" + data["html"] + "</div>" );
+
+          setTimeout(get_messages,0);
+      });
+    }
+    
+    $(document).ready(function(){   
+      console.log("called long polling /messages/");
+      setTimeout(get_messages,200);
+    });
+ 
+
+    // see: http://datamaps.github.io/
+    var basic_choropleth = new Datamap({
+      element: document.getElementById("basic_choropleth"),
+      projection: 'mercator',
+      fills: {
+        defaultFill: "#ABDDA4",
+        authorHasTraveledTo: "#fa0fa0"
+      },
+      data: {
+        USA: { fillKey: "authorHasTraveledTo" },
+        JPN: { fillKey: "authorHasTraveledTo" },
+        ITA: { fillKey: "authorHasTraveledTo" },
+        CRI: { fillKey: "authorHasTraveledTo" },
+        KOR: { fillKey: "authorHasTraveledTo" },
+        DEU: { fillKey: "authorHasTraveledTo" },
+      }
+    });
+
+    var colors = d3.scale.category10();
+
+    window.setInterval(function() {
+      basic_choropleth.updateChoropleth({
+        USA: colors(Math.random() * 10),
+        RUS: colors(Math.random() * 100),
+        AUS: { fillKey: 'authorHasTraveledTo' },
+        BRA: colors(Math.random() * 50),
+        CAN: colors(Math.random() * 50),
+        ZAF: colors(Math.random() * 50),
+        IND: colors(Math.random() * 50),
+      });
+    }, 2000);
+
+    
+  </script>
+  </body>
+</html>
