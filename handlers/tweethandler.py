@@ -9,7 +9,7 @@ from tornado import gen
 from twittercomments.models.tinydb.tweet import Tweet
 import requests
 from collections import OrderedDict
-from twittercomments.server import hash_cache, country_cache
+from twittercomments.server import hash_cache, country_cache, user_cache
 #import reverse_geocode
 
 @app.add_route('/add/tweet/<int:tid>', dispatch={"post" : "add_tweet"})
@@ -60,31 +60,18 @@ class TweetHandler(PowHandler):
         """
             just a simple hanlder sceleton. Adapt to your needs
         """ 
-        #print(self.request.body)
         try:
-            #data=self.request.body
             data=json.loads(self.request.body.decode('utf-8'))
-            #data2=json.loads(self.request.body)
         except: 
             print("No data body!")
-        
-        # already seen that tweet ?
+
         #print("Coordinates: {}".format(data["coordinates"]))
         print("Place: {}".format(data["place"]))
         #print("User location: {}".format(data["user"]["location"]))
         #print("User lang: {}".format(data["user"]["lang"]))
-        try:
-            if data["retweeted_status"]["id_str"] in self.application.tweet_cache:
-                self.application.tweet_cache[data["retweeted_status"]["id_str"]] += 1
-                print("retweet found")
-        except:
-            pass
         t=Tweet()
         t.tweet_id = tid
         t.text=data["text"]
-        #print("   #TAGS: {}".format(str(data["entities"]["hashtags"])))
-        #print("Using hash cache: {}".format(id(hash_cache)))
-
         #
         # update the hashtags cache
         #
@@ -98,9 +85,8 @@ class TweetHandler(PowHandler):
                     hash_cache[htag["text"]] = 1
         except:
             t.hashtags=[]
-        
         #
-        # update the country cache ..
+        # update the country cache
         #
         try:
             # see: https://bitbucket.org/richardpenman/reverse_geocode/src/default/
@@ -113,6 +99,21 @@ class TweetHandler(PowHandler):
         except:
             print("  .... Could not identify county by coordinates")
         
+        #
+        # update the user cache
+        #
+        try:
+            user_id = "@" + data["user"]["screen_name"]
+            if user_id in user_cache:
+                user_cache[user_id] += 1
+            else:
+                user_cache[user_id] = 1
+        except:
+            print(" ERR No User: should never happen")
+        #
+        # update the tweets per minute cache
+        # 
+
         #tweets_descending = OrderedDict(sorted(self.application.tweet_cache.items(), key=lambda kv: kv[1], reverse=True))
         #hash_descending = OrderedDict(sorted(hash_cache.items(), key=lambda kv: kv[1], reverse=True))
         #for counter, elem in enumerate(hash_descending):

@@ -56,7 +56,7 @@ class Dash(PowHandler):
         # from dispatcher (see above)
         #self.success(template="index.tmpl", dash_block=retval, data=res, num_tweets=num_tweets )
         #self.render("base_dash.tmpl", dash_block=retval)
-        self.render("index.tmpl", dash_block=retval)
+        self.render("index2.tmpl", dash_block=retval)
 
     
     def dash_ajax(self):

@@ -19,7 +19,7 @@ import random
 import requests
 from tornado import httpclient
 from twittercomments.models.tinydb.tweet import Tweet
-from twittercomments.server import hash_cache, country_cache
+from twittercomments.server import hash_cache, country_cache, user_cache
 #
 #
 # embed dash in website. (Django example)
@@ -121,27 +121,50 @@ def _create_app(*args, **kwargs):
 
     # use somhow raw html : https://github.com/plotly/dash-dangerously-set-inner-html
 
-    app.layout = html.Div(className="justify-content-center",children=[
+    app.layout = html.Div(className="container",children=[
         #html.H1(children='Hello Dash'),
-        dcc.Graph(id='live-update-graph'),
+        html.Div(className="row", children=[
+                dcc.Graph(id='live-update-hash-graph'),
+        ]),
+        html.Div(className="row", children=[
+                dcc.Graph(id='live-update-user-graph'),
+        ]),
         dcc.Interval(
             id='interval-component',
             interval=10*1000, # in milliseconds
             n_intervals=0
         )
     ])
-    def get_hashtags():
-        http_client = httpclient.HTTPClient()
-        response = http_client.fetch("http:/localhost:8080/hashtags")
-        #print(response)
-        #return
-    
-    @app.callback(Output('live-update-graph', 'figure'),
+
+    @app.callback(Output('live-update-user-graph', 'figure'),
               [Input('interval-component', 'n_intervals')])
-    def update_graph_live(n):        
+    def update_user_graph_live(n):        
+        #get_hashtags()
+        print("updating pie chart")
+        try:
+            #print("in Dash using hash cache: {}".format(id(hash_cache)))
+            user_descending = OrderedDict(sorted(user_cache.items(), key=lambda kv: kv[1], reverse=True))
+        except:
+            pass
+        #print(data)
+        data=[]
+        top10=list(user_descending.items())[0:9]
+        top10_names=list(user_descending)[0:9]
+        print(" --> top 10 user names: {}".format(top10_names))
+        print(" --> top 10 user values: {}".format([x[1] for x in top10]))
+        labels=top10_names
+        values=[x[1] for x in top10]
+       
+        fig = go.Pie(labels=labels, values=values)
+        return {'data': [fig]}
+
+    
+
+    @app.callback(Output('live-update-hash-graph', 'figure'),
+              [Input('interval-component', 'n_intervals')])
+    def update_hash_graph_live(n):        
         #get_hashtags()ö
         try:
-            hash_cache
             #print("in Dash using hash cache: {}".format(id(hash_cache)))
             hash_descending = OrderedDict(sorted(hash_cache.items(), key=lambda kv: kv[1], reverse=True))
             #print(70*"x")
@@ -162,26 +185,19 @@ def _create_app(*args, **kwargs):
         data.append(go.Bar(
                 x=top10_names,
                 y=[x[1] for x in top10],
-            ))
-        #trace2 = go.Bar(
-        #    x=['giraffes', 'orangutans', 'monkeys'],
-        #    y=random.sample(range(0,10),3),
-        #    name='LA Zoo'
+            ))        
+        #layout = go.Layout(
+        #    margin=go.layout.Margin(
+        #        l=40,
+        #        r=30,
+        #        b=120,
+        #        t=10,
+        #        pad=4
+        #    ),
+        #    width=500
         #)
 
-        
-        layout = go.Layout(
-            margin=go.layout.Margin(
-                l=40,
-                r=30,
-                b=120,
-                t=10,
-                pad=4
-            ),
-            width=500
-        )
-
-        fig = go.Figure(data=data, layout=layout)
+        fig = go.Figure(data=data)
         return fig
         #py.iplot(fig, filename='grouped-bar')
 

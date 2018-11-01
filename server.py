@@ -21,7 +21,7 @@ country_cache = {}
 hash_cache = {}
 user_cache = {}
 tweet_cache = {}
-
+tweets_per_minute_cache = {}
 
 def main(stdout=False):    
     if stdout:

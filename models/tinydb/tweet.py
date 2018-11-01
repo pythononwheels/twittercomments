@@ -15,6 +15,7 @@ class Tweet(TinyModel):
         'text'                      :   { 'type' : 'string', 'maxlength' : 300 },
         'tweet_id'                  :   { 'type' : 'string' },
         'hashtags'                  :   { 'type' : 'list', "default" : [] },
+        "user_id"                   :   { "type" : "string" },
         "user_screenname"           :   { "type" : "string"},
         "profile_image_url_https"   :   { "type" : "string"}
         }
