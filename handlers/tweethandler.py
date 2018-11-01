@@ -10,6 +10,7 @@ from twittercomments.models.tinydb.tweet import Tweet
 import requests
 from collections import OrderedDict
 from twittercomments.server import hash_cache, country_cache
+#import reverse_geocode
 
 @app.add_route('/add/tweet/<int:tid>', dispatch={"post" : "add_tweet"})
 @app.add_route('/messages', dispatch={"get" : "get_messages"})
@@ -68,10 +69,10 @@ class TweetHandler(PowHandler):
             print("No data body!")
         
         # already seen that tweet ?
-        print("Coordinates: {}".format(data["coordinates"]))
+        #print("Coordinates: {}".format(data["coordinates"]))
         print("Place: {}".format(data["place"]))
-        print("User location: {}".format(data["user"]["location"]))
-        print("User lang: {}".format(data["user"]["lang"]))
+        #print("User location: {}".format(data["user"]["location"]))
+        #print("User lang: {}".format(data["user"]["lang"]))
         try:
             if data["retweeted_status"]["id_str"] in self.application.tweet_cache:
                 self.application.tweet_cache[data["retweeted_status"]["id_str"]] += 1
@@ -83,9 +84,12 @@ class TweetHandler(PowHandler):
         t.text=data["text"]
         #print("   #TAGS: {}".format(str(data["entities"]["hashtags"])))
         #print("Using hash cache: {}".format(id(hash_cache)))
+
+        #
+        # update the hashtags cache
+        #
         try:
-            t.hashtags=data["entities"]["hashtags"]
-            
+            t.hashtags=data["entities"]["hashtags"]    
             for htag in t.hashtags:
                 #print("adding to hashtags: {} to cache:".format(htag["text"], ))
                 if htag["text"] in hash_cache:
@@ -94,8 +98,23 @@ class TweetHandler(PowHandler):
                     hash_cache[htag["text"]] = 1
         except:
             t.hashtags=[]
+        
+        #
+        # update the country cache ..
+        #
+        try:
+            # see: https://bitbucket.org/richardpenman/reverse_geocode/src/default/
+            #country = reverse_geocode.search(data["coordinates"]["coordinates"][0])["country"]
+            country = data["place"]["country_code"]
+            if country in country_cache:
+                country_cache[country] += 1
+            else:
+                country_cache[country] = 1
+        except:
+            print("  .... Could not identify county by coordinates")
+        
         #tweets_descending = OrderedDict(sorted(self.application.tweet_cache.items(), key=lambda kv: kv[1], reverse=True))
-        hash_descending = OrderedDict(sorted(hash_cache.items(), key=lambda kv: kv[1], reverse=True))
+        #hash_descending = OrderedDict(sorted(hash_cache.items(), key=lambda kv: kv[1], reverse=True))
         #for counter, elem in enumerate(hash_descending):
         #    if counter < 9:
         #        print("hash top #{} : {} : {}".format(counter,  elem, str(hash_descending[elem])))

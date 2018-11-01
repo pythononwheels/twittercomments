@@ -27,12 +27,23 @@ class StdOutListener( StreamListener ):
     def on_data( self, status ):
         #print("Entered on_data()")
         data = json.loads(status)
-        print(40*"*")
-        print(data["text"])
+        print(70*"*")
+        print("Text:")
+        print("     {}".format(data["text"]))
         try:
-            print(data["entities"]["hashtags"])
+            print(65*"-")
+            for elem in data["entities"]["hashtags"]:
+                print("       {}".format(elem["text"]))
+            
         except:
-            print("Key entities Missing")
+            print("       Key entities Missing")
+        print(65*"-")
+        try:
+            for elem in data["retweeted_status"]["entities"]["hashtags"]:
+                print("       {}".format(elem["text"]))
+        except:
+            print("       Key retweeted status entities Missing")
+        print(70*"*")
         headers = {'content-type': 'application/json'}
         #
         # check for some unwanted stuff

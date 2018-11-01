@@ -136,16 +136,24 @@ class Application(tornado.web.Application):
         request_time = 1000.0 * handler.request.request_time()
         #log_method("%d %s %.2fms", handler.get_status(),
         #           handler._request_summary(), request_time)
-        log_method("%s %d %s %.2fms %s", handler.request.remote_ip, handler.get_status(),
+        try:
+            log_method("%s %d %s %.2fms %s", handler.request.remote_ip, handler.get_status(),
                 handler._request_summary(), request_time, datetime.datetime.utcnow().strftime(myapp["date_format"]) 
             )
-        if message:
-            log_method("%s %d %s %s", 
-                handler.request.remote_ip, 
-                handler.get_status(), 
-                str(message).encode("utf-8"), 
-                datetime.datetime.utcnow().strftime(myapp["date_format"])  
-            )
+        except Exception as e:
+            print(e)
+            access_log.error(e)
+        try:
+            if message:
+                log_method("%s %d %s %s", 
+                    handler.request.remote_ip, 
+                    handler.get_status(), 
+                    str(message).encode("utf-8"), 
+                    datetime.datetime.utcnow().strftime(myapp["date_format"])  
+                )
+        except Exception as e:
+            print(e)
+            access_log.error(e)
 
     def log(self, message, status="INFO"):
         """ 

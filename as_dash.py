@@ -142,15 +142,15 @@ def _create_app(*args, **kwargs):
         #get_hashtags()ö
         try:
             hash_cache
-            print("in Dash using hash cache: {}".format(id(hash_cache)))
+            #print("in Dash using hash cache: {}".format(id(hash_cache)))
             hash_descending = OrderedDict(sorted(hash_cache.items(), key=lambda kv: kv[1], reverse=True))
-            print(70*"x")
-            for counter, elem in enumerate(hash_descending):
-                if counter < 9:
-                    print("dash hash top #{} : {} : {}".format(counter,  elem, str(hash_descending[elem])))
-                else:
-                    break
-            print(70*"x")
+            #print(70*"x")
+            #for counter, elem in enumerate(hash_descending):
+            #    if counter < 9:
+            #        print("dash hash top #{} : {} : {}".format(counter,  elem, str(hash_descending[elem])))
+            #    else:
+            #        break
+            #print(70*"x")
         except:
             pass
         #print(data)
