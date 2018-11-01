@@ -18,7 +18,8 @@ import plotly.graph_objs as go
 import random
 import requests
 from tornado import httpclient
-from twittercomments.server import app as tcapp
+from twittercomments.models.tinydb.tweet import Tweet
+from twittercomments.server import hash_cache, country_cache
 #
 #
 # embed dash in website. (Django example)
@@ -61,9 +62,6 @@ def dispatcher(request,**kwargs):
     #    print("The kwargs value of {} is {}".format(key, value))
     #print("  ..Done..")
     #print(40*"-")
-    
-    
-
     app = _create_app(**kwargs)
     
     params = {
@@ -141,27 +139,38 @@ def _create_app(*args, **kwargs):
     @app.callback(Output('live-update-graph', 'figure'),
               [Input('interval-component', 'n_intervals')])
     def update_graph_live(n):        
-        #get_hashtags()
+        #get_hashtags()ö
         try:
-            data = tcapp.hash_cache.items()
-            print("xxxxxxxx xxxxx xxxxx hab welche xxxxx x xxxxxxx xxxx x x x")
+            hash_cache
+            print("in Dash using hash cache: {}".format(id(hash_cache)))
+            hash_descending = OrderedDict(sorted(hash_cache.items(), key=lambda kv: kv[1], reverse=True))
+            print(70*"x")
+            for counter, elem in enumerate(hash_descending):
+                if counter < 9:
+                    print("dash hash top #{} : {} : {}".format(counter,  elem, str(hash_descending[elem])))
+                else:
+                    break
+            print(70*"x")
         except:
             pass
         #print(data)
-        trace1 = go.Bar(
-            x=['giraffes', 'orangutans', 'monkeys'],
-            y=random.sample(range(0,10),3),
-            name='SF Zoo'
-        )
-        trace2 = go.Bar(
-            x=['giraffes', 'orangutans', 'monkeys'],
-            y=random.sample(range(0,10),3),
-            name='LA Zoo'
-        )
+        data=[]
+        top10=list(hash_descending.items())[0:9]
+        top10_names=list(hash_descending)[0:9]
+        print(" --> top 10 names: {}".format(top10_names))
+        print(" --> top 10 values: {}".format([x[1] for x in top10]))
+        data.append(go.Bar(
+                x=top10_names,
+                y=[x[1] for x in top10],
+            ))
+        #trace2 = go.Bar(
+        #    x=['giraffes', 'orangutans', 'monkeys'],
+        #    y=random.sample(range(0,10),3),
+        #    name='LA Zoo'
+        #)
 
-        data = [trace1, trace2]
+        
         layout = go.Layout(
-            barmode='group',
             margin=go.layout.Margin(
                 l=40,
                 r=30,
@@ -170,7 +179,6 @@ def _create_app(*args, **kwargs):
                 pad=4
             ),
             width=500
-
         )
 
         fig = go.Figure(data=data, layout=layout)

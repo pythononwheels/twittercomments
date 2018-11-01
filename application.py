@@ -143,7 +143,7 @@ class Application(tornado.web.Application):
             log_method("%s %d %s %s", 
                 handler.request.remote_ip, 
                 handler.get_status(), 
-                str(message), 
+                str(message).encode("utf-8"), 
                 datetime.datetime.utcnow().strftime(myapp["date_format"])  
             )
 

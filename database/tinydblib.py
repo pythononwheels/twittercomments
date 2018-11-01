@@ -6,7 +6,7 @@ from tinydb import TinyDB, Query
 from tinydb.storages import JSONStorage
 from tinydb_serialization import SerializationMiddleware
 from twittercomments.models.tinydb.serializer import DateTimeSerializer
-
+from tinydb.storages import MemoryStorage
 
 tinydb = database.get("tinydb", None)
 

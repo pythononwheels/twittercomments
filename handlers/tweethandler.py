@@ -9,8 +9,9 @@ from tornado import gen
 from twittercomments.models.tinydb.tweet import Tweet
 import requests
 from collections import OrderedDict
+from twittercomments.server import hash_cache, country_cache
 
-@app.add_route('/add/tweet/<int:id>', dispatch={"post" : "add_tweet"})
+@app.add_route('/add/tweet/<int:tid>', dispatch={"post" : "add_tweet"})
 @app.add_route('/messages', dispatch={"get" : "get_messages"})
 @app.add_route('/hashes', dispatch={"get" : "get_hashes"})
 class TweetHandler(PowHandler):
@@ -36,24 +37,25 @@ class TweetHandler(PowHandler):
         """
             long polling handler method registering the callbacks
         """
-        print("Adding callback")
+        print("Adding callback...")
         self.__class__.callbacks.add(self._callback)
         #print(self.__class__.callbacks)
 
 
     def _callback(self, html):
-        print("sending callback")
+        print("sending callback...")
         self.success(message="new tweet", data=html, pure=True)
         self.finish()
 
     async def fire_callbacks(self, new_tweet):
+        print("fire all callbacks!")
+        print(50*"-")
         for c in self.__class__.callbacks:
-            print("fire!")
             c(new_tweet)
         
         self.__class__.callbacks = set()
 
-    async def add_tweet(self, id=None):
+    async def add_tweet(self, tid=None):
         """
             just a simple hanlder sceleton. Adapt to your needs
         """ 
@@ -66,10 +68,10 @@ class TweetHandler(PowHandler):
             print("No data body!")
         
         # already seen that tweet ?
-        if id in self.application.tweet_cache:
-            self.application.tweet_cache[id] =  self.application.tweet_cache[id] + 1
-        else:
-            self.application.tweet_cache[id] = 1
+        print("Coordinates: {}".format(data["coordinates"]))
+        print("Place: {}".format(data["place"]))
+        print("User location: {}".format(data["user"]["location"]))
+        print("User lang: {}".format(data["user"]["lang"]))
         try:
             if data["retweeted_status"]["id_str"] in self.application.tweet_cache:
                 self.application.tweet_cache[data["retweeted_status"]["id_str"]] += 1
@@ -77,25 +79,28 @@ class TweetHandler(PowHandler):
         except:
             pass
         t=Tweet()
-        t.tweet_id = id
+        t.tweet_id = tid
         t.text=data["text"]
-        print("   #TAGS: {}".format(str(data["entities"]["hashtags"])))
+        #print("   #TAGS: {}".format(str(data["entities"]["hashtags"])))
+        #print("Using hash cache: {}".format(id(hash_cache)))
         try:
             t.hashtags=data["entities"]["hashtags"]
+            
             for htag in t.hashtags:
-                if htag["text"] in self.application.hash_cache:
-                    self.application.hash_cache[htag["text"]] += 1
+                #print("adding to hashtags: {} to cache:".format(htag["text"], ))
+                if htag["text"] in hash_cache:
+                    hash_cache[htag["text"]] += 1
                 else:
-                    self.application.hash_cache[htag["text"]] = 1
+                    hash_cache[htag["text"]] = 1
         except:
             t.hashtags=[]
-        tweets_descending = OrderedDict(sorted(self.application.tweet_cache.items(), key=lambda kv: kv[1], reverse=True))
-        hash_descending = OrderedDict(sorted(self.application.hash_cache.items(), key=lambda kv: kv[1], reverse=True))
-        for counter, elem in enumerate(hash_descending):
-            if counter < 9:
-                print("hash top #{} : {} : {}".format(counter,  elem, str(hash_descending[elem])))
-            else:
-                break
+        #tweets_descending = OrderedDict(sorted(self.application.tweet_cache.items(), key=lambda kv: kv[1], reverse=True))
+        hash_descending = OrderedDict(sorted(hash_cache.items(), key=lambda kv: kv[1], reverse=True))
+        #for counter, elem in enumerate(hash_descending):
+        #    if counter < 9:
+        #        print("hash top #{} : {} : {}".format(counter,  elem, str(hash_descending[elem])))
+        #    else:
+        #        break
         try:
             t.user_screenname=data["user"]["screen_name"]
         except:

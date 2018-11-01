@@ -17,6 +17,11 @@ from twittercomments.application import Application, log_handler
 import logging
 
 app=Application()
+country_cache = {}
+hash_cache = {}
+user_cache = {}
+tweet_cache = {}
+
 
 def main(stdout=False):    
     if stdout:
@@ -73,10 +78,10 @@ def main(stdout=False):
         print("running...")
     
     
-    app.country_cache = {}
-    app.hash_cache = {}
-    app.user_cache = {}
-    app.tweet_cache = {}
+    app.country_cache = country_cache
+    app.hash_cache = hash_cache
+    app.user_cache = user_cache
+    app.tweet_cache = tweet_cache
 
     http_server = tornado.httpserver.HTTPServer(app)
     http_server.listen(app_settings["port"])

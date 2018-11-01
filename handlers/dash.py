@@ -82,7 +82,7 @@ class Dash(PowHandler):
         #
         # now hand over to the dispatcher
         #
-        retval = dispatcher(self.request, username="fake", session_id=1234)
+        retval = dispatcher(self.request, username="fake", session_id=1234, tcapp=self.application)
         #print("dash_ajax I got retval: {}".format(str(retval)[0:200]))
         #print("dash_ajax I got username(from session): {}".format(name))
         # finish
