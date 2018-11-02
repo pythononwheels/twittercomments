@@ -19,7 +19,7 @@ import random
 import requests
 from tornado import httpclient
 from twittercomments.models.tinydb.tweet import Tweet
-from twittercomments.server import hash_cache, country_cache, user_cache
+from twittercomments.server import hash_cache, country_cache, user_cache, tweet_cache
 #
 #
 # embed dash in website. (Django example)
@@ -121,20 +121,29 @@ def _create_app(*args, **kwargs):
 
     # use somhow raw html : https://github.com/plotly/dash-dangerously-set-inner-html
 
-    app.layout = html.Div(className="container",children=[
-        #html.H1(children='Hello Dash'),
+    app.layout = html.Div(className="container", children=[
+        #html.H1(children='#Tweets'),
         html.Div(className="row", children=[
-                dcc.Graph(id='live-update-hash-graph'),
+            html.Div(className="cold-md-4", children=[
+                dcc.Graph(id='live-update-hash-graph')
+            ]),
+            html.Div(className="cold-md-4", children=[
+                dcc.Graph(id='live-update-user-graph'),
+            ])
         ]),
         html.Div(className="row", children=[
-                dcc.Graph(id='live-update-user-graph'),
+                html.Div(className="cold-md-4"),
+            html.Div(className="cold-md-4", children=[
+                html.Div("Test2")
+            ])
         ]),
         dcc.Interval(
             id='interval-component',
-            interval=10*1000, # in milliseconds
+            interval=5*1000, # in milliseconds
             n_intervals=0
         )
     ])
+
 
     @app.callback(Output('live-update-user-graph', 'figure'),
               [Input('interval-component', 'n_intervals')])
@@ -154,7 +163,6 @@ def _create_app(*args, **kwargs):
         print(" --> top 10 user values: {}".format([x[1] for x in top10]))
         labels=top10_names
         values=[x[1] for x in top10]
-       
         fig = go.Pie(labels=labels, values=values)
         return {'data': [fig]}
 
@@ -163,7 +171,7 @@ def _create_app(*args, **kwargs):
     @app.callback(Output('live-update-hash-graph', 'figure'),
               [Input('interval-component', 'n_intervals')])
     def update_hash_graph_live(n):        
-        #get_hashtags()ö
+        #get_hashtags()
         try:
             #print("in Dash using hash cache: {}".format(id(hash_cache)))
             hash_descending = OrderedDict(sorted(hash_cache.items(), key=lambda kv: kv[1], reverse=True))
@@ -178,26 +186,26 @@ def _create_app(*args, **kwargs):
             pass
         #print(data)
         data=[]
-        top10=list(hash_descending.items())[0:9]
-        top10_names=list(hash_descending)[0:9]
+        top10=list(hash_descending.items())[0:14]
+        top10_names=list(hash_descending)[0:14]
         print(" --> top 10 names: {}".format(top10_names))
         print(" --> top 10 values: {}".format([x[1] for x in top10]))
         data.append(go.Bar(
                 x=top10_names,
                 y=[x[1] for x in top10],
             ))        
-        #layout = go.Layout(
-        #    margin=go.layout.Margin(
-        #        l=40,
-        #        r=30,
-        #        b=120,
-        #        t=10,
-        #        pad=4
-        #    ),
-        #    width=500
-        #)
+        layout = go.Layout(
+            margin=go.layout.Margin(
+                l=40,
+                r=20,
+                b=100,
+                t=20,
+                pad=4
+            ),
+            width=475
+        )
 
-        fig = go.Figure(data=data)
+        fig = go.Figure(data=data, layout=layout)
         return fig
         #py.iplot(fig, filename='grouped-bar')
 

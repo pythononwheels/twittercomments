@@ -33,6 +33,9 @@ hr{
 } 
 
 
+.container{
+  width: 95%;
+}
 .middle {
   vertical-align: middle;
 }

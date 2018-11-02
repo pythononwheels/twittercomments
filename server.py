@@ -16,12 +16,13 @@ from twittercomments.powlib import merge_two_dicts
 from twittercomments.application import Application, log_handler
 import logging
 
+
 app=Application()
 country_cache = {}
 hash_cache = {}
 user_cache = {}
-tweet_cache = {}
-tweets_per_minute_cache = {}
+tweet_cache = []
+
 
 def main(stdout=False):    
     if stdout:

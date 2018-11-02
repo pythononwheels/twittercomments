@@ -9,8 +9,11 @@ from tornado import gen
 from twittercomments.models.tinydb.tweet import Tweet
 import requests
 from collections import OrderedDict
-from twittercomments.server import hash_cache, country_cache, user_cache
+from twittercomments.server import hash_cache, country_cache, user_cache, tweet_cache
 #import reverse_geocode
+import dateutil.parser
+import datetime
+import pandas as pd
 
 @app.add_route('/add/tweet/<int:tid>', dispatch={"post" : "add_tweet"})
 @app.add_route('/messages', dispatch={"get" : "get_messages"})
@@ -21,7 +24,7 @@ class TweetHandler(PowHandler):
     #
     
     callbacks=set()
-
+    
     #@web.asynchronous
     def get_hashes(self):
         """
@@ -130,11 +133,21 @@ class TweetHandler(PowHandler):
         except:
             t.profile_image_url_https = ""
         #
+        # update the tweets cache
+        #
+        try:
+            t.timestamp = dateutil.parser.parse(data["created_at"])
+        except:
+            t.timestamp = datetime.datetime.utcnow()
+        tweet_cache.append(t.to_dict())
+        t.upsert()
+        
+        #
         # get the embed html from twitter oembed API
         #
         r=requests.get("https://publish.twitter.com/oembed?url=https://twitter.com/Interior/status/"+ t.tweet_id )
         #print(r.json())
-        #t.upsert()
+        
         #print(self.__class__.callbacks)
         await self.fire_callbacks(r.json())
         #self.success(message="Added tweet id: {} ".format(str(id)), data=t.to_json(), format="json", pure=True)

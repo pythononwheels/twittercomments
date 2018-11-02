@@ -57,22 +57,29 @@
       </div>
     
         <div class="row">
-          <div class="col-md-4">
-              <img src={{ static_url("images/Twitter_Logo_Blue.png") }}  style="display: inline-block; height: 145px;"/>
-              <a href="https://www.pythononwheels.org"><img src={{ static_url("images/pow_logo_300.png") }}  style="display: inline-block; height:100px;"/></a>
-              <span class="justify-content-center"><h2>Realtime data:<small>(twitter)</small></h2></span>
+          <div class="col-md-2">
+              
+              <a href="https://www.pythononwheels.org"><img src={{ static_url("images/python_on_dash.png") }}  style="display: inline-block; height:100px;"/></a>
+              <span class="justify-content-center"><h2>Realtime data:<small>(from twitter)</small></h2></span>
+              
+                <button type="button" class="btn btn-primary" style="margin-bottom: 10px; margin-top: 10px;">
+                  Number of analyzed tweets: <span class="badge badge-light" id="num_tweets">4</span>
+                </button>
+               
               <div class="tweet_span">
                 <div class="tweets"></div>
               </div>
           </div>
           
-          <div class="col-md-8">
-            <div id="react-entry-point">
-              <span class="_dash-loading">
-                  Loading... Dash components
-              </span>
+          <div class="col-md-10">
+            
+              <div id="react-entry-point">
+                <span class="_dash-loading">
+                    Loading... Dash components
+                </span>
+            
             </div>
-              
+            
               <!-- this is the place where the dash HTML is rendered untouched (raw) -->
               {% raw dash_block %}
               <!-- End dash-->
