@@ -45,17 +45,12 @@ class StdOutListener( StreamListener ):
             print("       Key retweeted status entities Missing")
         print(70*"*")
         headers = {'content-type': 'application/json'}
-        #
-        # check for some unwanted stuff
-        #
-        #if "porn" in data["text"]
-        print(40*"*")
+        print(60*"-")
         r = requests.post("http://localhost:8080/add/tweet/"+str(data["id_str"]), data=json.dumps(data), headers=headers)
         #print(status, flush = True)
-        print(40*"-")
-        
+        #print(40*"-")
         print("Response: " + str(r))
-        print(40*"-")
+        print(60*"-")
         return True
     
     def handle_request_response(self, response):

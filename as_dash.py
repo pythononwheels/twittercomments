@@ -93,46 +93,30 @@ def dispatcher(request,**kwargs):
 
 def _create_app(*args, **kwargs):
     ''' Creates dash application '''
-    
-    #print(40*"-")
-    #print("  Kwargs in _create_app:")
-    #for key, value in kwargs.items():
-    #    print("The kwargs value of {} is {}".format(key, value))
-    #print("  ..Done..")
-    #print(40*"-")
-    #app = dash.Dash(csrf_protect=False)
-    
+
     app = myDash(csrf_protect=False)
-    
     app.config['suppress_callback_exceptions']=True
-
-    # get the data from the db and init the dataframe
-    #print("*******************************************************")
-    #print(" Getting tweets from DB and building DataFrame")
-    #print("*******************************************************")
-    #m=Tweet()
-    #res=m.get_all()
-    #df=pd.DataFrame([x.to_dict() for x in res])
-
     #
-    # APP LAYOUT FROM HERE
+    # The Dash Layout
+    # This is rendered in views/index2.tmpl -> {% raw dash_block %}
     #
-    # for the eight / four columns, see: https://community.plot.ly/t/how-to-manage-the-layout-of-division-figures-in-dash/6484/2
-
-    # use somhow raw html : https://github.com/plotly/dash-dangerously-set-inner-html
-
     app.layout = html.Div(className="container", children=[
-        #html.H1(children='#Tweets'),
+
         html.Div(className="row", children=[
             html.Div(className="cold-md-4", children=[
+                # the hashtag barchart
                 dcc.Graph(id='live-update-hash-graph')
             ]),
             html.Div(className="cold-md-4", children=[
-                dcc.Graph(id='live-update-user-graph'),
+                # the twitter users pie chart
+                dcc.Graph(id='live-update-user-graph')
             ])
         ]),
         html.Div(className="row", children=[
-                html.Div(className="cold-md-4"),
+            html.Div(className="cold-md-4", children=[
+                # the tweets per minute timeline chart
+                dcc.Graph(id='live-update-timeline-graph')
+            ]),
             html.Div(className="cold-md-4", children=[
                 html.Div("Test2")
             ])
@@ -144,6 +128,27 @@ def _create_app(*args, **kwargs):
         )
     ])
 
+    @app.callback(Output('live-update-timeline-graph', 'figure'),
+              [Input('interval-component', 'n_intervals')])
+    def update_timeline_graph_live(n):        
+        #get_hashtags()
+        print("updating pie chart")
+        try:
+            #print("in Dash using hash cache: {}".format(id(hash_cache)))
+            user_descending = OrderedDict(sorted(user_cache.items(), key=lambda kv: kv[1], reverse=True))
+        except:
+            pass
+        #print(data)
+        data=[]
+        top10=list(user_descending.items())[0:9]
+        top10_names=list(user_descending)[0:9]
+        print(" --> top 10 user names: {}".format(top10_names))
+        print(" --> top 10 user values: {}".format([x[1] for x in top10]))
+        labels=top10_names
+        values=[x[1] for x in top10]
+        fig = go.Pie(labels=labels, values=values)
+        return {'data': [fig]}
+    
 
     @app.callback(Output('live-update-user-graph', 'figure'),
               [Input('interval-component', 'n_intervals')])
@@ -163,7 +168,7 @@ def _create_app(*args, **kwargs):
         print(" --> top 10 user values: {}".format([x[1] for x in top10]))
         labels=top10_names
         values=[x[1] for x in top10]
-        fig = go.Pie(labels=labels, values=values)
+        fig = go.Pie(labels=labels, values=values, textinfo='value')
         return {'data': [fig]}
 
     

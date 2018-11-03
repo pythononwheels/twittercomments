@@ -22,7 +22,7 @@ country_cache = {}
 hash_cache = {}
 user_cache = {}
 tweet_cache = []
-
+ofile=open("tweets.json", "a")
 
 def main(stdout=False):    
     if stdout:

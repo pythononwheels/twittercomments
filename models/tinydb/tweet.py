@@ -18,6 +18,7 @@ class Tweet(TinyModel):
         "user_id"                   :   { "type" : "string" },
         "user_screenname"           :   { "type" : "string"},
         "profile_image_url_https"   :   { "type" : "string"},
+        "retweeted_status"          :   { "type" : "dict"},
         "timestamp"                 :   { "type" : "datetime" }
         }
 

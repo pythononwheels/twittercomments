@@ -57,13 +57,13 @@
       </div>
     
         <div class="row">
-          <div class="col-md-2">
-              
-              <a href="https://www.pythononwheels.org"><img src={{ static_url("images/python_on_dash.png") }}  style="display: inline-block; height:100px;"/></a>
-              <span class="justify-content-center"><h2>Realtime data:<small>(from twitter)</small></h2></span>
-              
-                <button type="button" class="btn btn-primary" style="margin-bottom: 10px; margin-top: 10px;">
-                  Number of analyzed tweets: <span class="badge badge-light" id="num_tweets">4</span>
+          <div class="col-md-3">
+              <div class="justify-content-center align-items-center">
+                <a href="https://www.pythononwheels.org"><img src={{ static_url("images/python_on_dash.png") }}  style="margin-left: 60px; height:100px;"/></a>
+                <div class="justify-content-center" style="margin-bottom: 10px; margin-top: 10px;"><h3>Realtime Twitter stream data:</h3></div>
+              </div>
+                <button type="button" class="btn btn-info btn-block" style="margin-bottom: 10px; margin-top: 10px;">
+                  Number of analyzed tweets: <span class="badge badge-light" id="num_tweets">#</span>
                 </button>
                
               <div class="tweet_span">
@@ -71,7 +71,7 @@
               </div>
           </div>
           
-          <div class="col-md-10">
+          <div class="col-md-9">
             
               <div id="react-entry-point">
                 <span class="_dash-loading">
@@ -118,7 +118,7 @@
         console.log(data);
 
         $(".tweets").prepend( "<div>" + data["html"] + "</div>" );
-        
+        $("#num_tweets").text(data["num_tweets"]);
         if (num_tweets >= max_tweets){
           $('.tweets').children().last().remove();
         }
